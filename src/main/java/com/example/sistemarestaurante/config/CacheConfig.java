@@ -13,7 +13,7 @@ public class CacheConfig {
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(10)) // Dados ficam no cache por 10 min
+                .entryTtl(Duration.ofMinutes(10))
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)

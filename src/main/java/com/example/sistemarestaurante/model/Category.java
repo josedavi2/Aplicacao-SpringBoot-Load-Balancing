@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
-
+import java.util.Set;
 @Entity
 @Table(name = "categories")
 @Data
@@ -32,5 +32,5 @@ public class Category implements Serializable {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<MenuItem> items;
+    private Set<MenuItem> items;
 }

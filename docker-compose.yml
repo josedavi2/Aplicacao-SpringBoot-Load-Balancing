@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # Banco de Dados MySQL
+  # Banco de Dados Único
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
@@ -17,20 +17,28 @@ services:
   redis-cache:
     image: redis:alpine
     container_name: redis-cache
-    ports:
-      - "6379:6379"
 
-  # A sua Aplicação Java (Agora no Docker)
-  sistema-restaurante:
-    build: . # Ele vai usar o seu Dockerfile da pasta atual
+  # CENÁRIO A: Cluster com Problemas (Legacy)
+  sistema-legacy:
+    build: .
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/restaurante_db
+      - SPRING_PROFILES_ACTIVE=slow
+      - JAVA_OPTS=-Xmx256m
     depends_on:
       - mysql-db
-      - redis-cache
-    expose:
-      - "8080" # Porta interna para o Nginx ver
+
+  # CENÁRIO B: Cluster Otimizado (Optimized)
+  sistema-optimized:
+    build: .
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/restaurante_db
       - SPRING_DATA_REDIS_HOST=redis-cache
+      - SPRING_PROFILES_ACTIVE=fast
+      - JAVA_OPTS=-Xmx1024m
+    depends_on:
+      - mysql-db
+      - redis-cache
 
   # Load Balancer Nginx
   nginx-lb:
@@ -41,7 +49,8 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - sistema-restaurante
+      - sistema-legacy
+      - sistema-optimized
 
 volumes:
   mysql_data:

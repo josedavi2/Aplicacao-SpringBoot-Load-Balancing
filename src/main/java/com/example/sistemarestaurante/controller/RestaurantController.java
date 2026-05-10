@@ -19,14 +19,15 @@ public class RestaurantController {
 
     @GetMapping("/slow")
     public List<Restaurant> getSlow() {
-        System.out.println(">>> Buscando no MySQL (Lento)...");
+        System.out.println(">>> [LOG] Cenário Lento: Buscando no MySQL (N+1)...");
         return repository.findAll();
     }
 
     @GetMapping("/fast")
     @Cacheable(value = "restaurants")
     public List<Restaurant> getFast() {
-        System.out.println(">>> Buscando no Cache/Redis (Rápido)...");
-        return repository.findAll();
+        System.out.println(">>> [LOG] Cenário Rápido: Usando Join Fetch e Redis...");
+
+        return repository.findAllOptimized();
     }
 }

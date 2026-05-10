@@ -3,6 +3,8 @@ package com.example.sistemarestaurante.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -29,5 +31,5 @@ public class Restaurant implements Serializable {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<Category> categories;
+    private Set<Category> categories;
 }
