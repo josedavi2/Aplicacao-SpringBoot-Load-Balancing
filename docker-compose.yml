@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # Banco de Dados MySQL
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_DATABASE: restaurante_db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # Cache Redis
+  redis-cache:
+    image: redis:alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+
+  # A sua Aplicação Java (Agora no Docker)
+  sistema-restaurante:
+    build: . # Ele vai usar o seu Dockerfile da pasta atual
+    depends_on:
+      - mysql-db
+      - redis-cache
+    expose:
+      - "8080" # Porta interna para o Nginx ver
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/restaurante_db
+      - SPRING_DATA_REDIS_HOST=redis-cache
+
+  # Load Balancer Nginx
+  nginx-lb:
+    image: nginx:alpine
+    container_name: nginx-lb
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - sistema-restaurante
+
+volumes:
+  mysql_data:

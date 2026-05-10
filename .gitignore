@@ -1,0 +1,19 @@
+# Java / Maven
+target/
+*.class
+*.jar
+
+
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+.vscode/
+
+
+mysql_data/
+.env
+
+# Logs
+*.log
